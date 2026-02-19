@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chandu's Letter - A Watercolor Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+            background: #faf8f5;
+        }
+
+        .paper-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.4;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.5'/%3E%3C/svg%3E");
+        }
+
+        .bg-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: opacity 2s ease;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .bg-layer.active {
+            opacity: 1;
+        }
+
+        /* Scene 0: Sky */
+        .world-0 {
+            background: linear-gradient(to bottom, #b8d4f0 0%, #e8f4f8 100%);
+        }
+
+        /* Scene 1: Galaxy */
+        .world-1 {
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255,200,255,0.4) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(200,220,255,0.4) 0%, transparent 50%),
+                linear-gradient(to bottom, #1a0b2e 0%, #4a3b6e 50%, #2d1b4e 100%);
+        }
+        .nebula {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(40px);
+            opacity: 0.6;
+            animation: pulse 10s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Scene 2: Bubble Sky */
+        .world-2 {
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(200,240,230,0.6) 0%, transparent 60%),
+                linear-gradient(to bottom, #7fcfd4 0%, #b8e6e8 100%);
+        }
+        .bubble-float {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.1));
+            border: 2px solid rgba(255,255,255,0.6);
+            box-shadow: inset 0 0 20px rgba(255,255,255,0.5);
+            animation: float-up 8s infinite ease-in-out;
+        }
+        @keyframes float-up {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-30px) translateX(10px); }
+        }
+
+        /* Scene 3: Underwater Purple */
+        .world-3 {
+            background: 
+                radial-gradient(circle at 30% 80%, rgba(180,150,200,0.5) 0%, transparent 50%),
+                linear-gradient(to bottom, #6b5b95 0%, #9b8cb5 50%, #c5b9d6 100%);
+        }
+        .heart-reef {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 200px;
+            opacity: 0.3;
+            filter: blur(2px);
+            transition: all 2s;
+        }
+        .world-3.active .heart-reef {
+            opacity: 0.8;
+            filter: blur(0) hue-rotate(320deg) brightness(1.2);
+        }
+
+        /* Scene 4: Petal Storm */
+        .world-4 {
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(200,150,150,0.4) 0%, transparent 50%),
+                linear-gradient(to bottom, #8b5a6b 0%, #d4a5b5 100%);
+        }
+        .petal {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #ffb6c1, #ff69b4);
+            border-radius: 0 100% 0 100%;
+            opacity: 0.8;
+            animation: fall-rotate 6s linear infinite;
+        }
+        @keyframes fall-rotate {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+        /* Scene 5: Cable Car Lines */
+        .world-5 {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(180,180,255,0.4) 0%, transparent 40%),
+                radial-gradient(circle at 80% 50%, rgba(200,180,255,0.4) 0%, transparent 40%),
+                linear-gradient(to bottom, #6b7bff 0%, #a5b4ff 100%);
+        }
+        .cable-line {
+            position: absolute;
+            top: 30%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+        }
+
+        /* Scene 6: Golden Night */
+        .world-6 {
+            background: 
+                radial-gradient(circle at 50% 0%, rgba(255,220,150,0.4) 0%, transparent 50%),
+                linear-gradient(to bottom, #1a1b3e 0%, #3a4b8c 100%);
+        }
+        .golden-ray {
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            width: 2px;
+            height: 150%;
+            background: linear-gradient(to bottom, rgba(255,215,0,0.8), transparent);
+            transform-origin: top;
+            animation: ray-rotate 20s linear infinite;
+        }
+
+        /* Scene 7: Rose Garden */
+        .world-7 {
+            background: 
+                radial-gradient(circle at 50% 60%, rgba(255,200,220,0.6) 0%, transparent 60%),
+                radial-gradient(circle at 50% 50%, rgba(255,240,200,0.4) 0%, transparent 40%),
+                linear-gradient(to bottom, #d4a5c4 0%, #e8c4d8 50%, #f0e0f0 100%);
+        }
+        .giant-rose {
+            position: absolute;
+            bottom: 10%;
+            font-size: 150px;
+            opacity: 0.4;
+            animation: sway 4s ease-in-out infinite;
+        }
+        @keyframes sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        /* Scene 8: Indigo Water */
+        .world-8 {
+            background: 
+                radial-gradient(circle at 50% 100%, rgba(100,100,150,0.4) 0%, transparent 50%),
+                linear-gradient(to bottom, #0f0f2e 0%, #2a2a6e 50%, #1a1a4e 100%);
+        }
+        .water-reflection {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to bottom, transparent, rgba(100,100,200,0.3));
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        #mainCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            filter: url(#watercolor);
+        }
+
+        svg {
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #speech-bubble {
+            position: absolute;
+            top: 20%;
+            left: 55%;
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 25px;
+            border: 3px solid #ff9999;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            max-width: 300px;
+            font-size: 18px;
+            color: #5a4a3a;
+            line-height: 1.5;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: auto;
+        }
+        #speech-bubble.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 40px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255,255,255,0.95);
+            border-bottom: 3px solid #ff9999;
+            border-right: 3px solid #ff9999;
+            transform: rotate(45deg);
+        }
+
+        #letter-card {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            width: 85%;
+            max-width: 600px;
+            max-height: 70vh;
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.2)),
+                rgba(255,255,255,0.3);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 
+                0 12px 40px rgba(0,0,0,0.15),
+                inset 0 0 30px rgba(255,255,255,0.6);
+            opacity: 0;
+            pointer-events: auto;
+            overflow-y: auto;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        #letter-card.visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        #letter-card h2 {
+            font-size: 34px;
+            color: #5a3a2a;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 30px rgba(255,220,150,0.9);
+            font-weight: bold;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+
+        #letter-card p {
+            font-size: 19px;
+            line-height: 2;
+            color: #4a3a2a;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+
+        .highlight-yellow {
+            background: linear-gradient(to bottom, transparent 60%, rgba(255,235,100,0.9) 60%);
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #5a4a00;
+        }
+
+        .highlight-pink {
+            background: linear-gradient(to bottom, transparent 60%, rgba(255,182,193,0.7) 60%);
+            padding: 0 4px;
+            border-radius: 4px;
+            color: #8b4a5c;
+        }
+
+        #controls {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        button {
+            background: rgba(255,255,255,0.95);
+            border: 3px solid #ffb6c1;
+            border-radius: 50px;
+            padding: 16px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            color: #5a3a2a;
+            font-family: inherit;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            background: #fff;
+        }
+
+        #back-btn {
+            opacity: 0.7;
+            padding: 16px 28px;
+        }
+
+        #progress-dots {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            border: 2px solid rgba(255,255,255,0.9);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #ffb6c1;
+            transform: scale(1.4);
+            box-shadow: 0 0 15px rgba(255,182,193,0.9);
+        }
+
+        .hint {
+            position: absolute;
+            bottom: 120px;
+            right: 40px;
+            color: #5a4a3a;
+            font-size: 16px;
+            opacity: 0.8;
+            font-style: italic;
+            animation: pulse-hint 2s infinite;
+        }
+        @keyframes pulse-hint {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.4; }
+        }
+
+        .morphing {
+            animation: morph-shake 0.1s infinite;
+        }
+        @keyframes morph-shake {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(-3px, 3px) scale(1.02); }
+            75% { transform: translate(3px, -3px) scale(0.98); }
+        }
+    </style>
+</head>
+<body>
+
+    <svg>
+        <filter id="watercolor">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="3" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+        </filter>
+    </svg>
+
+    <div class="paper-texture"></div>
+
+    <!-- Background Worlds -->
+    <div class="bg-layer world-0 active" id="bg-0"></div>
+    <div class="bg-layer world-1" id="bg-1"></div>
+    <div class="bg-layer world-2" id="bg-2"></div>
+    <div class="bg-layer world-3" id="bg-3">
+        <div class="heart-reef">💜</div>
+    </div>
+    <div class="bg-layer world-4" id="bg-4"></div>
+    <div class="bg-layer world-5" id="bg-5">
+        <div class="cable-line"></div>
+    </div>
+    <div class="bg-layer world-6" id="bg-6"></div>
+    <div class="bg-layer world-7" id="bg-7">
+        <div class="giant-rose">🌹</div>
+    </div>
+    <div class="bg-layer world-8" id="bg-8">
+        <div class="water-reflection"></div>
+    </div>
+
+    <canvas id="mainCanvas"></canvas>
+
+    <div id="ui-layer">
+        <div id="speech-bubble">
+            hello SAI Sabitha gabbireedy let's go through Chandu's letter
+        </div>
+
+        <div id="letter-card">
+            <h2 id="slide-heading"></h2>
+            <p id="slide-body"></p>
+        </div>
+
+        <div class="hint" id="hint">Tap Next to begin the journey</div>
+
+        <div id="controls">
+            <button id="back-btn" onclick="prevSlide()" style="display:none">← Back</button>
+            <button id="next-btn" onclick="nextSlide()">Next <span style="color:#ff6b9d">♥</span></button>
+        </div>
+
+        <div id="progress-dots"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Slides content - EXACT TEXT AS PROVIDED
+        const slides = [
+            {
+                heading: "Sai Sabitha Gabbi Reddy",
+                body: `Nuvvu naa life lo love ante ento first time chupinchav.
+Nuvvu care chupinchina vidhaanam valla ammayi premaga ela untundo naaku nijanga ni vallay telisindhi.
+Thanks to you, now I won't get cheated r used by anyone, in the name of love.
+Naa messages ki attentive ga undaydhanivi, ala chaydham, illa chaydham.
+My last birthday with you is always the best celebration in my life.`
+            },
+            {
+                heading: "Nuvvu nannu change chesina way",
+                body: `Hostel lo undadam valla naaku basic habits kuda sarigga teliyalaydhu.
+Face wash ela cheyyalo, face wash chestunnappudu ears kuda clean cheyyali ani nijamga naku thaylidhu, nuvve chuppinchaydhaka.
+Adi naaku chala impact create chaysindhi.
+Ippatiki naynu face wash chaysukunatappudu roju ventaday chaydhu, nijamadhi.
+Eppatiki marchipolaynu.`
+            },
+            {
+                heading: "Naa biggest mistake",
+                body: `Nenu matallo kaadu, chethullo chupinchali ani over ga anukoni, matladadam thaggincha.
+Konni sarlu silent ga undipoyi, actions tho choopistha ani matalu manesa.
+Danivalla daily chinna chinna conversations, simple things, miss ayyam.
+Nijanga adi mana bonding ni hurt chesindi.`
+            },
+            {
+                heading: "Sorry",
+                body: `Separation tarvatha naa immaturity valla ninnu chala trouble chesa.
+Appudu naaku ardham kaale, ippudu clear ga telusthundhi, nenu wrong ani.
+Ninnu hurt chesinanduku naaku chala guilt undhi.
+Sorry.`
+            },
+            {
+                heading: "Ippudu naaku ardham ayyindi",
+                body: `Actions important, kani words kuda important ani, college ayyaka matladalani, time spend chayyali ani anukonivunduntav.
+But naynu dhooram velli, night kuda sariga matladaka, I made you feel lonely.
+Sorry for that.
+Ippudu ninnu respect tho, calm ga matladuthu, actions tho kuda correct ga undali ani fix ayyanu.`
+            },
+            {
+                heading: "Next 4 months",
+                body: `Next 4 months naaku chala crucial.
+Last one year ha nenu work chesthunna, career build cheyyali ani.
+Kani nuvvu okka message pettina, naa mind automatic ga nee daggarakay vellipothundi.
+Endukante nuvvu unte, migatha antha pakkana pettestha.
+Nuvvu lekapothe matram naa future kosam nenu serious ga work meeda focus cheystha.`
+            },
+            {
+                heading: "Last thing",
+                body: `Chappali anukunnadhi antha, oka message lo chepthunna.
+Finally, nenu sorry.
+Nuvvu mee father ki daughter kavochu, mee brother ki sister, ee world ki society ki software engineer r maybe nothing.
+But Sabitha ane nuvvu naaku mathram chala chala special.
+Yantha ante, nikosam yedaina vadilesey antha, nikosam yemaina chesey antha.
+Miss you.
+Take care, Sabitha.`
+            },
+            {
+                heading: "Bye",
+                body: `Future lo manam couple ga kalisi undakapovachu.
+Malli kalavadam kuda correct kadhu ani naaku telusu.
+Kani nuvvu naaku eppatiki special e.
+Endukante gatham ekkadiki podhu kadha, danini marchalem kuda.`
+            }
+        ];
+
+        // State management
+        let currentScene = 0; // 0=intro, 1-8=slides
+        let vehicle = 'plane'; // plane, balloon, bird, submarine, bike, cablecar, comet, elephant, boat
+        let animState = 'idle'; // idle, morphing, traveling, arriving
+        let time = 0;
+        let morphProgress = 0;
+        let travelProgress = 0;
+        let girl2Visible = false;
+        
+        // Position and motion
+        let pos = { x: -100, y: height * 0.4, scale: 1, rotation: 0 };
+        let targetPos = { x: width * 0.3, y: height * 0.4 };
+        let velocity = { x: 2, y: 0 };
+
+        // Initialize dots
+        const dotsContainer = document.getElementById('progress-dots');
+        for (let i = 0; i < 8; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            if (i === 0) dot.classList.add('active');
+            dot.onclick = () => goToScene(i + 1);
+            dotsContainer.appendChild(dot);
+        }
+
+        function highlightText(text) {
+            const yellowWords = ['Sabitha', 'love', 'Sorry', 'Miss you', 'Next 4 months', 'best', 'special', 'future'];
+            const pinkWords = ['hurt', 'guilt', 'lonely', 'care', 'respect', 'wrong', 'mistake'];
+            
+            let html = text;
+            yellowWords.forEach(word => {
+                const regex = new RegExp(`(${word})`, 'gi');
+                html = html.replace(regex, '<span class="highlight-yellow">$1</span>');
+            });
+            pinkWords.forEach(word => {
+                if (!yellowWords.includes(word)) {
+                    const regex = new RegExp(`(${word})`, 'gi');
+                    html = html.replace(regex, '<span class="highlight-pink">$1</span>');
+                }
+            });
+            return html;
+        }
+
+        function updateScene() {
+            const card = document.getElementById('letter-card');
+            const speech = document.getElementById('speech-bubble');
+            const hint = document.getElementById('hint');
+            
+            // Background transitions
+            for (let i = 0; i <= 8; i++) {
+                document.getElementById(`bg-${i}`)?.classList.toggle('active', i === currentScene);
+            }
+            
+            // Update dots
+            document.querySelectorAll('.dot').forEach((dot, idx) => {
+                dot.classList.toggle('active', idx === currentScene - 1);
+            });
+            
+            // Button states
+            document.getElementById('back-btn').style.display = currentScene > 0 ? 'flex' : 'none';
+            document.getElementById('next-btn').innerHTML = currentScene === 8 ? 'End ♥' : 'Next <span style="color:#ff6b9d">♥</span>';
+            
+            if (currentScene === 0) {
+                card.classList.remove('visible');
+                speech.classList.add('visible');
+                hint.style.display = 'block';
+                hint.textContent = 'Tap Next to begin the journey';
+            } else {
+                speech.classList.remove('visible');
+                hint.style.display = 'none';
+                const slide = slides[currentScene - 1];
+                document.getElementById('slide-heading').innerHTML = slide.heading;
+                document.getElementById('slide-body').innerHTML = highlightText(slide.body);
+                
+                if (animState === 'arriving') {
+                    setTimeout(() => card.classList.add('visible'), 500);
+                }
+            }
+        }
+
+        function startTransition() {
+            animState = 'morphing';
+            morphProgress = 0;
+            document.body.classList.add('morphing');
+            
+            // Determine next vehicle based on target scene
+            const vehicles = ['plane', 'balloon', 'bird', 'submarine', 'bike', 'cablecar', 'comet', 'elephant', 'boat'];
+            const nextVehicle = vehicles[currentScene];
+            
+            setTimeout(() => {
+                vehicle = nextVehicle;
+                animState = 'traveling';
+                travelProgress = 0;
+                document.body.classList.remove('morphing');
+            }, 800);
+        }
+
+        function nextSlide() {
+            if (currentScene === 8) return;
+            
+            if (currentScene === 0) {
+                girl2Visible = true;
+                startTransition();
+            } else {
+                document.getElementById('letter-card').classList.remove('visible');
+                setTimeout(startTransition, 300);
+            }
+        }
+
+        function prevSlide() {
+            if (currentScene > 0) {
+                document.getElementById('letter-card').classList.remove('visible');
+                currentScene--;
+                const vehicles = ['plane', 'balloon', 'bird', 'submarine', 'bike', 'cablecar', 'comet', 'elephant', 'boat'];
+                vehicle = vehicles[currentScene];
+                if (currentScene === 0) girl2Visible = false;
+                updateScene();
+            }
+        }
+
+        function goToScene(n) {
+            if (n !== currentScene && animState === 'idle') {
+                document.getElementById('letter-card').classList.remove('visible');
+                currentScene = n;
+                const vehicles = ['plane', 'balloon', 'bird', 'submarine', 'bike', 'cablecar', 'comet', 'elephant', 'boat'];
+                vehicle = vehicles[n];
+                if (n === 0) girl2Visible = false;
+                else girl2Visible = true;
+                updateScene();
+            }
+        }
+
+        // Drawing functions for each vehicle
+        function drawPlane(x, y, scale, rotation, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.scale(scale, scale);
+            
+            const bounce = Math.sin(time * 0.05) * 3;
+            ctx.translate(0, bounce);
+            
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(255,100,100,0.3)';
+            
+            // Body
+            ctx.fillStyle = '#ff9999';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 60, 25, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#cc6666';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Wings
+            ctx.fillStyle = '#ffb6c1';
+            ctx.beginPath();
+            ctx.ellipse(0, -20, 40, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.ellipse(0, 15, 35, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Tail
+            ctx.fillStyle = '#ffaaaa';
+            ctx.beginPath();
+            ctx.moveTo(-50, -5);
+            ctx.lineTo(-70, -20);
+            ctx.lineTo(-70, 10);
+            ctx.fill();
+            
+            // Propeller
+            ctx.save();
+            ctx.translate(55, 0);
+            ctx.rotate(time * 0.3);
+            ctx.fillStyle = 'rgba(200,150,100,0.8)';
+            ctx.fillRect(-2, -25, 4, 50);
+            ctx.fillRect(-25, -2, 50, 4);
+            ctx.restore();
+            
+            ctx.restore();
+        }
+
+        function drawHotAirBalloon(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const float = Math.sin(time * 0.03) * 5;
+            ctx.translate(0, float);
+            
+            // Balloon
+            const gradient = ctx.createRadialGradient(-20, -30, 0, 0, 0, 80);
+            gradient.addColorStop(0, '#ffb6c1');
+            gradient.addColorStop(0.5, '#ff69b4');
+            gradient.addColorStop(1, '#ff1493');
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(0, -40, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#cc6699';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Stripes
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 3;
+            for (let i = -30; i <= 30; i += 15) {
+                ctx.beginPath();
+                ctx.moveTo(i, -80);
+                ctx.lineTo(i * 0.5, 0);
+                ctx.stroke();
+            }
+            
+            // Basket
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(-15, 10, 30, 25);
+            ctx.strokeStyle = '#5a2d0c';
+            ctx.strokeRect(-15, 10, 30, 25);
+            
+            // Ropes
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-15, 10);
+            ctx.lineTo(-25, -10);
+            ctx.moveTo(15, 10);
+            ctx.lineTo(25, -10);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        function drawBird(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const wingFlap = Math.sin(time * 0.2) * 0.3;
+            
+            // Body
+            ctx.fillStyle = '#87ceeb';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 40, 25, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#5a9fd4';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Head
+            ctx.beginPath();
+            ctx.arc(30, -10, 18, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Beak
+            ctx.fillStyle = '#ffa500';
+            ctx.beginPath();
+            ctx.moveTo(45, -10);
+            ctx.lineTo(55, -5);
+            ctx.lineTo(45, 0);
+            ctx.fill();
+            
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(35, -12, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Wings
+            ctx.fillStyle = '#b0e0e6';
+            ctx.save();
+            ctx.translate(-10, -5);
+            ctx.rotate(wingFlap);
+            ctx.beginPath();
+            ctx.ellipse(0, -20, 30, 15, -0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+            
+            ctx.save();
+            ctx.translate(-10, 5);
+            ctx.rotate(-wingFlap);
+            ctx.beginPath();
+            ctx.ellipse(0, 20, 25, 12, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore();
+            
+            ctx.restore();
+        }
+
+        function drawSubmarine(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const bob = Math.sin(time * 0.04) * 8;
+            ctx.translate(0, bob);
+            
+            // Main body
+            ctx.fillStyle = '#e6e6fa';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 60, 35, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#9999cc';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Periscope
+            ctx.fillStyle = '#d8d8f0';
+            ctx.fillRect(15, -35, 10, 20);
+            ctx.fillRect(10, -40, 20, 5);
+            
+            // Window
+            ctx.fillStyle = '#87ceeb';
+            ctx.beginPath();
+            ctx.arc(25, -5, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Propeller
+            ctx.save();
+            ctx.translate(-60, 0);
+            ctx.rotate(time * 0.2);
+            ctx.fillStyle = '#999';
+            for (let i = 0; i < 3; i++) {
+                ctx.fillRect(-3, -15, 6, 30);
+                ctx.rotate(Math.PI * 2 / 3);
+            }
+            ctx.restore();
+            
+            // Bubbles
+            for (let i = 0; i < 5; i++) {
+                const bx = -70 - (time * 2 + i * 20) % 100;
+                const by = Math.sin(time * 0.1 + i) * 10;
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.beginPath();
+                ctx.arc(bx, by, 4 + i, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        function drawBike(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const pedal = time * 0.2;
+            
+            // Wheels
+            ctx.strokeStyle = '#8b4513';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(-40, 20, 25, 0, Math.PI * 2);
+            ctx.arc(40, 20, 25, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Spokes rotating
+            ctx.save();
+            ctx.translate(-40, 20);
+            ctx.rotate(pedal);
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(25, 0);
+                ctx.stroke();
+                ctx.rotate(Math.PI / 3);
+            }
+            ctx.restore();
+            
+            ctx.save();
+            ctx.translate(40, 20);
+            ctx.rotate(pedal);
+            for (let i = 0; i < 6; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(25, 0);
+                ctx.stroke();
+                ctx.rotate(Math.PI / 3);
+            }
+            ctx.restore();
+            
+            // Frame
+            ctx.strokeStyle = '#ff6b6b';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(-40, 20);
+            ctx.lineTo(-10, -10);
+            ctx.lineTo(30, -10);
+            ctx.lineTo(40, 20);
+            ctx.moveTo(-10, -10);
+            ctx.lineTo(-5, 20);
+            ctx.stroke();
+            
+            // Handlebars
+            ctx.beginPath();
+            ctx.moveTo(30, -10);
+            ctx.lineTo(35, -25);
+            ctx.stroke();
+            
+            // Seats
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(-20, -15, 15, 8);
+            ctx.fillRect(5, -15, 15, 8);
+            
+            ctx.restore();
+        }
+
+        function drawCableCar(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const sway = Math.sin(time * 0.03) * 0.05;
+            ctx.rotate(sway);
+            
+            // Cable line (drawn across screen but clipped to car area)
+            ctx.strokeStyle = 'rgba(100,100,100,0.5)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(-200, -40);
+            ctx.lineTo(200, -40);
+            ctx.stroke();
+            
+            // Hanger
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, -40);
+            ctx.lineTo(0, -25);
+            ctx.stroke();
+            
+            // Car body
+            ctx.fillStyle = '#ffd700';
+            ctx.beginPath();
+            ctx.roundRect(-30, -25, 60, 50, 10);
+            ctx.fill();
+            ctx.strokeStyle = '#b8860b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Windows
+            ctx.fillStyle = '#87ceeb';
+            ctx.beginPath();
+            ctx.roundRect(-20, -15, 18, 20, 5);
+            ctx.roundRect(2, -15, 18, 20, 5);
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Glow lines approaching
+            if (currentScene === 5) {
+                ctx.strokeStyle = 'rgba(255,255,200,0.8)';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([10, 10]);
+                ctx.lineDashOffset = -time * 2;
+                ctx.beginPath();
+                ctx.moveTo(-100, 0);
+                ctx.lineTo(-35, 0);
+                ctx.moveTo(100, 0);
+                ctx.lineTo(35, 0);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            ctx.restore();
+        }
+
+        function drawComet(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            // Tail
+            const tailGradient = ctx.createLinearGradient(-100, 0, 0, 0);
+            tailGradient.addColorStop(0, 'rgba(255,215,0,0)');
+            tailGradient.addColorStop(0.5, 'rgba(255,215,0,0.3)');
+            tailGradient.addColorStop(1, 'rgba(255,215,0,0.8)');
+            
+            ctx.fillStyle = tailGradient;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(-100, -20);
+            ctx.lineTo(-120, 0);
+            ctx.lineTo(-100, 20);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Glow
+            const glow = ctx.createRadialGradient(0, 0, 5, 0, 0, 40);
+            glow.addColorStop(0, 'rgba(255,255,200,1)');
+            glow.addColorStop(0.5, 'rgba(255,215,0,0.5)');
+            glow.addColorStop(1, 'rgba(255,215,0,0)');
+            
+            ctx.fillStyle = glow;
+            ctx.beginPath();
+            ctx.arc(0, 0, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Core
+            ctx.fillStyle = '#fffacd';
+            ctx.beginPath();
+            ctx.arc(0, 0, 15, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        function drawElephant(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const walk = Math.sin(time * 0.08) * 5;
+            
+            // Body
+            ctx.fillStyle = '#d8bfd8';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 50, 40, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#b8a0c8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Head
+            ctx.beginPath();
+            ctx.arc(35, -20, 30, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Ear
+            ctx.fillStyle = '#e6d6e6';
+            ctx.beginPath();
+            ctx.ellipse(20, -25, 20, 25, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            
+            // Trunk
+            ctx.strokeStyle = '#d8bfd8';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.moveTo(55, -10);
+            ctx.quadraticCurveTo(70 + walk, 10, 65, 30);
+            ctx.stroke();
+            
+            // Eye
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(45, -25, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Legs (walking animation)
+            ctx.fillStyle = '#d8bfd8';
+            const legOffset = Math.sin(time * 0.15) * 10;
+            ctx.fillRect(-30 + legOffset, 30, 15, 30);
+            ctx.fillRect(-5 - legOffset, 30, 15, 30);
+            ctx.fillRect(10 + legOffset, 30, 15, 30);
+            ctx.fillRect(25 - legOffset, 30, 15, 30);
+            
+            ctx.restore();
+        }
+
+        function drawBoat(x, y, scale, alpha) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+            
+            const rock = Math.sin(time * 0.04) * 0.1;
+            ctx.rotate(rock);
+            
+            // Hull
+            ctx.fillStyle = '#f0f8ff';
+            ctx.beginPath();
+            ctx.moveTo(-40, 0);
+            ctx.lineTo(-30, 25);
+            ctx.lineTo(30, 25);
+            ctx.lineTo(40, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Mast
+            ctx.fillStyle = '#8b4513';
+            ctx.fillRect(-2, -50, 4, 50);
+            
+            // Sail
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.moveTo(2, -45);
+            ctx.lineTo(2, -5);
+            ctx.lineTo(35, -25);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#ddd';
+            ctx.stroke();
+            
+            // Paper texture on sail
+            ctx.fillStyle = 'rgba(255,200,200,0.3)';
+            ctx.beginPath();
+            ctx.arc(15, -30, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+
+        function drawGirls(vehicleX, vehicleY, scale, alpha) {
+            if (!girl2Visible) {
+                // Just girl 1 in plane
+                drawSingleGirl(vehicleX - 10, vehicleY - 5, scale, 0, alpha, true);
+                return;
+            }
+            
+            // Both girls positioned based on vehicle
+            let offset1, offset2;
+            switch(vehicle) {
+                case 'balloon':
+                    offset1 = { x: -8, y: 15 };
+                    offset2 = { x: 8, y: 15 };
+                    break;
+                case 'bird':
+                    offset1 = { x: -5, y: -8 };
+                    offset2 = { x: 5, y: -8 };
+                    break;
+                case 'submarine':
+                    offset1 = { x: -12, y: -5 };
+                    offset2 = { x: 5, y: -5 };
+                    break;
+                case 'bike':
+                    offset1 = { x: -12, y: -20 };
+                    offset2 = { x: 12, y: -20 };
+                    break;
+                case 'cablecar':
+                    offset1 = { x: -12, y: 0 };
+                    offset2 = { x: 12, y: 0 };
+                    break;
+                case 'comet':
+                    offset1 = { x: -10, y: 5 };
+                    offset2 = { x: 10, y: 5 };
+                    break;
+                case 'elephant':
+                    offset1 = { x: 0, y: -35 };
+                    offset2 = { x: 15, y: -35 };
+                    break;
+                case 'boat':
+                    offset1 = { x: -10, y: -10 };
+                    offset2 = { x: 10, y: -10 };
+                    break;
+                default:
+                    offset1 = { x: -10, y: -5 };
+                    offset2 = { x: -25, y: -3 };
+            }
+            
+            drawSingleGirl(vehicleX + offset1.x, vehicleY + offset1.y, scale * 0.8, 0, alpha, true);
+            drawSingleGirl(vehicleX + offset2.x, vehicleY + offset2.y, scale * 0.75, 0.2, alpha, false);
+        }
+
+        function drawSingleGirl(x, y, scale, rotation, alpha, isGirl1) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.translate(x, y);
+            ctx.rotate(rotation);
+            ctx.scale(scale, scale);
+            
+            const bob = Math.sin(time * 0.04 + (isGirl1 ? 0 : 1)) * 2;
+            ctx.translate(0, bob);
+            
+            if (!isGirl1) ctx.rotate(-0.1);
+            
+            // Face
+            ctx.fillStyle = isGirl1 ? '#fdd5b1' : '#ffe0d0';
+            ctx.beginPath();
+            ctx.arc(0, 0, 12, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = isGirl1 ? '#e0b090' : '#e0c0b0';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Eyes
+            if (Math.sin(time * 0.05 + (isGirl1 ? 0 : 10)) > 0.95) {
+                ctx.strokeStyle = '#5a4a3a';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(-5, -1);
+                ctx.lineTo(-2, -1);
+                ctx.moveTo(2, -1);
+                ctx.lineTo(5, -1);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = '#5a4a3a';
+                ctx.beginPath();
+                ctx.arc(-3, -1, 1.5, 0, Math.PI * 2);
+                ctx.arc(3, -1, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Smile
+            ctx.beginPath();
+            ctx.arc(0, 3, 4, 0.2, Math.PI - 0.2);
+            ctx.strokeStyle = '#d4a090';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // Hair/Hat
+            if (isGirl1) {
+                ctx.fillStyle = '#8b4513';
+                ctx.beginPath();
+                ctx.arc(0, -6, 13, Math.PI, 0);
+                ctx.fill();
+                // Goggles
+                ctx.fillStyle = 'rgba(200,230,255,0.6)';
+                ctx.beginPath();
+                ctx.arc(-4, -3, 4, 0, Math.PI * 2);
+                ctx.arc(4, -3, 4, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            } else {
+                // Headband
+                ctx.fillStyle = '#ff99cc';
+                ctx.fillRect(-11, -8, 22, 5);
+                ctx.beginPath();
+                ctx.moveTo(-4, -8);
+                ctx.lineTo(-8, -15);
+                ctx.lineTo(0, -8);
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+
+        function animate() {
+            time++;
+            ctx.clearRect(0, 0, width, height);
+            
+            // State machine
+            if (animState === 'morphing') {
+                morphProgress += 0.02;
+                if (morphProgress >= 1) {
+                    morphProgress = 1;
+                }
+            } else if (animState === 'traveling') {
+                travelProgress += 0.008;
+                
+                // Move through screen based on vehicle
+                const startX = -150;
+                const endX = width * 0.5;
+                pos.x = startX + (endX - startX) * travelProgress;
+                pos.y = height * 0.4 + Math.sin(travelProgress * Math.PI) * 50;
+                
+                if (travelProgress >= 1) {
+                    animState = 'arriving';
+                    currentScene++;
+                    updateScene();
+                    setTimeout(() => {
+                        animState = 'idle';
+                    }, 500);
+                }
+            } else if (animState === 'idle') {
+                // Gentle hover at center when arrived
+                if (currentScene > 0) {
+                    pos.x = width * 0.5 + Math.sin(time * 0.02) * 10;
+                    pos.y = height * 0.4 + Math.sin(time * 0.03) * 15;
+                } else {
+                    // Intro loop
+                    pos.x += 3;
+                    if (pos.x > width + 150) pos.x = -150;
+                    pos.y = height * 0.4 + Math.sin(time * 0.02) * 30;
+                }
+            }
+            
+            // Determine which vehicles to draw and their alphas
+            let currentVeh = vehicle;
+            let prevVeh = 'plane';
+            const vehicles = ['plane', 'balloon', 'bird', 'submarine', 'bike', 'cablecar', 'comet', 'elephant', 'boat'];
+            if (currentScene > 0) prevVeh = vehicles[currentScene - 1];
+            
+            let currentAlpha = 1;
+            let prevAlpha = 0;
+            
+            if (animState === 'morphing') {
+                currentAlpha = morphProgress;
+                prevAlpha = 1 - morphProgress;
+            }
+            
+            // Draw previous vehicle fading out
+            if (animState === 'morphing' && prevAlpha > 0) {
+                switch(prevVeh) {
+                    case 'plane': drawPlane(pos.x, pos.y, 1, 0, prevAlpha); break;
+                    case 'balloon': drawHotAirBalloon(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'bird': drawBird(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'submarine': drawSubmarine(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'bike': drawBike(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'cablecar': drawCableCar(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'comet': drawComet(pos.x, pos.y, 1, prevAlpha); break;
+                    case 'elephant': drawElephant(pos.x, pos.y, 1, prevAlpha); break;
+                }
+            }
+            
+            // Draw current vehicle
+            if (currentAlpha > 0) {
+                switch(currentVeh) {
+                    case 'plane': 
+                        drawPlane(pos.x, pos.y, 1, 0, currentAlpha); 
+                        drawGirls(pos.x, pos.y, 1, currentAlpha);
+                        break;
+                    case 'balloon': 
+                        drawHotAirBalloon(pos.x, pos.y, 1.2, currentAlpha); 
+                        drawGirls(pos.x, pos.y, 1, currentAlpha);
+                        break;
+                    case 'bird': 
+                        drawBird(pos.x, pos.y, 1.3, currentAlpha); 
+                        drawGirls(pos.x, pos.y - 10, 0.8, currentAlpha);
+                        break;
+                    case 'submarine': 
+                        drawSubmarine(pos.x, pos.y, 1.2, currentAlpha); 
+                        drawGirls(pos.x + 10, pos.y - 5, 0.6, currentAlpha);
+                        break;
+                    case 'bike': 
+                        drawBike(pos.x, pos.y, 1.3, currentAlpha); 
+                        drawGirls(pos.x, pos.y - 10, 0.9, currentAlpha);
+                        break;
+                    case 'cablecar': 
+                        drawCableCar(pos.x, pos.y, 1.2, currentAlpha); 
+                        drawGirls(pos.x, pos.y + 5, 0.7, currentAlpha);
+                        break;
+                    case 'comet': 
+                        drawComet(pos.x, pos.y, 1.4, currentAlpha); 
+                        drawGirls(pos.x, pos.y, 0.6, currentAlpha);
+                        break;
+                    case 'elephant': 
+                        drawElephant(pos.x, pos.y + 20, 1.3, currentAlpha); 
+                        drawGirls(pos.x, pos.y - 20, 0.7, currentAlpha);
+                        break;
+                    case 'boat': 
+                        drawBoat(pos.x, pos.y + 50, 1.4, currentAlpha); 
+                        drawGirls(pos.x, pos.y + 30, 0.8, currentAlpha);
+                        break;
+                }
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize environment elements
+        function createEnvironment() {
+            // Galaxy stars for scene 1
+            const bg1 = document.getElementById('bg-1');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'absolute';
+                star.style.width = (Math.random() * 3 + 1) + 'px';
+                star.style.height = star.style.width;
+                star.style.background = 'white';
+                star.style.borderRadius = '50%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.animation = `pulse ${2 + Math.random() * 3}s infinite`;
+                star.style.opacity = Math.random();
+                bg1.appendChild(star);
+            }
+            
+            // Nebula clouds
+            for (let i = 0; i < 3; i++) {
+                const nebula = document.createElement('div');
+                nebula.className = 'nebula';
+                nebula.style.width = (200 + Math.random() * 200) + 'px';
+                nebula.style.height = nebula.style.width;
+                nebula.style.background = `radial-gradient(circle, ${['#ffb6c1', '#dda0dd', '#87ceeb'][i]}, transparent)`;
+                nebula.style.top = Math.random() * 80 + '%';
+                nebula.style.left = Math.random() * 80 + '%';
+                bg1.appendChild(nebula);
+            }
+            
+            // Bubbles for scene 2
+            const bg2 = document.getElementById('bg-2');
+            for (let i = 0; i < 15; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble-float';
+                bubble.style.width = (30 + Math.random() * 40) + 'px';
+                bubble.style.height = bubble.style.width;
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.top = Math.random() * 100 + '%';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                bg2.appendChild(bubble);
+            }
+            
+            // Petals for scene 4
+            const bg4 = document.getElementById('bg-4');
+            for (let i = 0; i < 20; i++) {
+                const petal = document.createElement('div');
+                petal.className = 'petal';
+                petal.style.left = Math.random() * 100 + '%';
+                petal.style.top = -30 + 'px';
+                petal.style.animationDelay = Math.random() * 6 + 's';
+                petal.style.animationDuration = (8 + Math.random() * 4) + 's';
+                bg4.appendChild(petal);
+            }
+            
+            // Golden rays for scene 6
+            const bg6 = document.getElementById('bg-6');
+            for (let i = 0; i < 8; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'golden-ray';
+                ray.style.left = (50 + (i - 4) * 10) + '%';
+                ray.style.transform = `rotate(${(i - 4) * 15}deg)`;
+                ray.style.animationDelay = (i * 0.5) + 's';
+                bg6.appendChild(ray);
+            }
+            
+            // Additional roses for scene 7
+            const bg7 = document.getElementById('bg-7');
+            for (let i = 0; i < 5; i++) {
+                const rose = document.createElement('div');
+                rose.className = 'giant-rose';
+                rose.style.left = (10 + i * 20) + '%';
+                rose.style.bottom = (5 + Math.random() * 10) + '%';
+                rose.style.fontSize = (100 + Math.random() * 50) + 'px';
+                rose.style.animationDelay = (i * 0.5) + 's';
+                rose.style.opacity = 0.3;
+                bg7.appendChild(rose);
+            }
+        }
+
+        createEnvironment();
+        updateScene();
+        animate();
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
